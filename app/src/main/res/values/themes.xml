@@ -1,0 +1,14 @@
+<resources>
+
+    <style name="Theme.MyTheme" parent="Theme.AppCompat.Light">
+        <!--&lt;!&ndash; Set AppCompat’s actionBarStyle &ndash;&gt;-->
+        <!--<item name="actionBarStyle">@style/MyActionBarStyle</item>-->
+
+        <!--&lt;!&ndash; Set AppCompat’s color theming attrs &ndash;&gt;-->
+        <!--<item name="colorPrimary">@color/my_awesome_red</item>-->
+        <!--<item name="colorPrimaryDark">@color/my_awesome_darker_red</item>-->
+
+        <!-- The rest of your attributes -->
+    </style>
+
+</resources>

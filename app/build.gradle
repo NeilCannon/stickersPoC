@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+buildscript {
+    dependencies {
+        repositories {
+            jcenter()
+        }
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+    }
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "org.fuzzyrobot.kpresent"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+kapt {
+    generateStubs = true
+}
+
+dependencies {
+
+    compile "com.android.support:appcompat-v7:23.2.1"
+    compile 'com.android.support:design:23.2.1'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile 'org.jetbrains.anko:anko-common:0.8.3'
+    compile 'org.jetbrains.anko:anko-sdk15:0.8.3'
+    compile 'org.jetbrains.anko:anko-support-v4:0.8.3'
+    compile 'org.jetbrains.anko:anko-appcompat-v7:0.8.3'
+
+    compile 'com.google.dagger:dagger:2.0.2'
+    kapt 'com.google.dagger:dagger-compiler:2.0.2'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    compile 'io.reactivex:rxjava:1.1.2'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxkotlin:0.40.1'
+
+    compile 'com.trello:rxlifecycle:0.5.0'
+// If you want pre-written Activities and Fragments you can subclass as providers
+    compile 'com.trello:rxlifecycle-components:0.5.0'
+
+// If you want to use Navi for providers
+//    compile 'com.trello:rxlifecycle-navi:0.5.0'
+    compile 'com.trello:rxlifecycle-kotlin:0.5.0'
+
+    compile 'com.facebook.fresco:fresco:0.8.0'
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+}
