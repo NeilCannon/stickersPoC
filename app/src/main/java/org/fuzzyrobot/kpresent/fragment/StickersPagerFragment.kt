@@ -20,7 +20,7 @@ class StickersPagerFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
 
-        pager.adapter = StickerPackPagerAdapter(fragmentManager, StickersTestData.things)
+        pager.adapter = StickerPackPagerAdapter(fragmentManager, StickersTestData.things, {})
 
         sliding_tabs.setupWithViewPager(pager)
         sliding_tabs.removeAllTabs()

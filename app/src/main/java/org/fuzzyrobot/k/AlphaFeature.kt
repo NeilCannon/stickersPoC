@@ -3,7 +3,7 @@ package org.fuzzyrobot.k
 import android.widget.ImageView
 
 
-class AlphaFeature(val view: ImageView, val alpha: Float) : Presenter {
+class AlphaFeature(val view: ImageView, val alpha: Float) : Aspect {
 
     override fun add() {
         view.alpha = alpha

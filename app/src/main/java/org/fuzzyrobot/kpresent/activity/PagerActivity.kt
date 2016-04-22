@@ -23,7 +23,7 @@ class PagerActivity : AppCompatActivity() {
         //        val thing2 = Thing("456ABC", "https://cdn0.iconfinder.com/data/icons/picons-social/57/54-slack-128.png", false, 16, "1.29")
         //        val things = arrayListOf(thing1, thing2, thing1, thing2, thing1, thing2, thing1, thing2, thing1, thing2, thing1, thing2, thing1, thing2, thing1, thing2, thing1, thing2, thing1, thing2)
 
-        pager.adapter = StickerPackPagerAdapter(supportFragmentManager, StickersTestData.things)
+        pager.adapter = StickerPackPagerAdapter(supportFragmentManager, StickersTestData.things, {})
 
         sliding_tabs.setupWithViewPager(pager)
         sliding_tabs.removeAllTabs()

@@ -2,7 +2,7 @@ package org.fuzzyrobot.kpresent
 
 import android.os.Parcel
 import android.os.Parcelable
-import org.fuzzyrobot.k.StateEvents
+import org.fuzzyrobot.k.StateActions
 import org.junit.Test
 
 class EventsTest {
@@ -19,7 +19,7 @@ class EventsTest {
 
     @Test fun test() {
 
-        val stateEvents = StateEvents<State>(State.OFF)
+        val stateEvents = StateActions<State>(State.OFF)
 
         stateEvents.whenEnter(State.ON) { println("ON") }
         stateEvents.whenExit(State.ON) { println("not ON") }

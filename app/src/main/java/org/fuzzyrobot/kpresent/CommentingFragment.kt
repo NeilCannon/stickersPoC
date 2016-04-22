@@ -14,9 +14,10 @@ import kotlinx.android.synthetic.main.fragment_commenting.*
 import org.fuzzyrobot.k.*
 import org.fuzzyrobot.kpresent.activity.MainActivity
 import org.fuzzyrobot.kpresent.model.StickerUse
-import org.fuzzyrobot.kpresent.presenter.HeightAdjustingDelegatingPresenter
-import org.fuzzyrobot.kpresent.presenter.HeightAdjustingPresenter
-import org.fuzzyrobot.kpresent.presenter.StickersPagerPresenter
+import org.fuzzyrobot.kpresent.presenter.CommentingPresenter
+import org.fuzzyrobot.kpresent.presenter.HeightAdjustingDelegatingAspect
+import org.fuzzyrobot.kpresent.presenter.HeightAdjustingAspect
+import org.fuzzyrobot.kpresent.presenter.StickersPagerAspect
 import org.fuzzyrobot.kpresent.rx.StickerClickSubject
 import org.fuzzyrobot.kpresent.rx.StickerService
 import org.jetbrains.anko.onClick
@@ -25,133 +26,96 @@ import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.indeterminateProgressDialog
 import javax.inject.Inject
 
-class CommentingFragment : RxFragment() {
+interface CommentingView {
+    fun stopEditing()
+    fun showMediaBar(visible:Boolean)
+    fun showStickers(visible:Boolean)
+    fun fadeStickersIcon(fade: Boolean)
+}
 
-    enum class State : Parcelable {
-        CLOSED,
-        TEXT_MEDIA {
-            override fun onKeyboardClosed(): State {
-                return State.CLOSED
-            }
-        },
-        STICKERS;
+class CommentingFragment : RxFragment(), CommentingView {
 
-        open fun onKeyboardClosed(): State = this
-
-        override fun writeToParcel(dest: Parcel?, flags: Int) {
-            dest?.writeInt(ordinal)
-        }
-
-        override fun describeContents(): Int {
-            return 0
-        }
-
-        companion object {
-            @JvmField final val CREATOR: Parcelable.Creator<State> = object : Parcelable.Creator<State> {
-                override fun createFromParcel(source: Parcel): State {
-                    return State.values()[source.readInt()]
-                }
-
-                override fun newArray(size: Int): Array<State?> {
-                    return arrayOfNulls(size)
-                }
-            }
-        }
-    }
-
-    @Inject lateinit var stickerClickSubject: StickerClickSubject
-    @Inject lateinit var stickerPurchasesSubject: StickerService
-
-    var mediaBar: InflatingPresenter? = null
-    var stickers: DecoratedPresenter? = null
-
-    var stateEvents = StateEvents<State>(State.CLOSED)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-//        // 2
-//        Observable.combineLatest(stickerClickSubject.get(), stickerPurchasesSubject.asObservable()) {
-//            t1, t2 ->
-//            StickerUse(t1, t2)
-//        }.bindToLifecycle(this@CommentingFragment).subscribe { println(it.isUsable()) }
-
-    }
+    private var keyboardOpenCloseListener: KeyboardOpenCloseListener? = null
+    var mediaBar: InflatingAspect? = null
+    var stickers: HeightAdjustingDelegatingAspect? = null
+    var stickerIconFade: Aspect? = null
+    lateinit var commentingPresenter: CommentingPresenter
 
     override fun onAttach(activity: Activity?) {
         super.onAttach(activity)
         (activity as MainActivity).activityComponent.inject(this)
 
-        // 1
-        stickerClickSubject.get().bindToLifecycle(this@CommentingFragment).subscribe {
-//            if (!stickerPurchasesSubject.hasValue()) {
-                val sticker = it
-                val progressDialog = indeterminateProgressDialog("waiting for sticker purchase info", null, null)
-                progressDialog.show()
-                stickerPurchasesSubject.asObservable().subscribe {
-                    progressDialog.dismiss()
-                    val stickerUse = StickerUse(sticker, it)
-                    println(stickerUse.isUsable())
-                }
-//            } else {
-//                val stickerUse = StickerUse(it, stickerPurchasesSubject.value)
-//                println(stickerUse.isUsable())
-//            }
-        }
+//        stickerClickSubject.get().bindToLifecycle(this@CommentingFragment).subscribe {
+//            commentingPresenter.onStickerClick(it)
+//        }
 
-    }
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        stateEvents.onRestoreInstanceState(savedInstanceState)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        stateEvents.onSaveInstanceState(outState)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        println("onCreateView")
         return inflater?.inflate(R.layout.fragment_commenting, container, false)
     }
 
-    private var keyboardOpenCloseListener: KeyboardOpenCloseListener? = null
-
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        mediaBar = InflatingPresenter(activity, R.id.media_bar_container, R.layout.fragment_media_bar)
-//        stickers = HeightAdjustingDelegatingPresenter({ getStickersHeight() }, find(R.id.stickers_container), R.layout.fragment_stickers_pager) { StickersPagerPresenter(it, fragmentManager) }
-        val stickersContainer = find<ViewGroup>(R.id.stickers_container)
-        stickers = HeightAdjustingPresenter({ getStickersHeight() }, stickersContainer, R.layout.fragment_stickers_pager)
-        stickers?.withDecorator(StickersPagerPresenter(stickersContainer, fragmentManager))
+        super.onViewCreated(view, savedInstanceState)
+        mediaBar = InflatingAspect(activity, R.id.media_bar_container, R.layout.fragment_media_bar)
 
-        keyboardOpenCloseListener = KeyboardOpenCloseListener(activity.my_content)
-        keyboardOpenCloseListener?.listenForKeyboard { keyboardInfo ->
-            if (!keyboardInfo.open) {
-                println("keyboard closed")
-                stateEvents.moveTo({ it.onKeyboardClosed() })
+        stickers = HeightAdjustingDelegatingAspect({ getStickersHeight() }, find(R.id.stickers_container), R.layout.fragment_stickers_pager) {
+            StickersPagerAspect(it, fragmentManager) {
+                commentingPresenter.onStickerClick(it)
             }
         }
 
-        stateEvents.whenEnterExit(State.TEXT_MEDIA, mediaBar!!)
-        stateEvents.whenExit(State.TEXT_MEDIA) {
-            comment_text.clearFocus()
-            hideKeyboard()
+        stickerIconFade = AlphaFeature(sticker_mode_icon, 0.6f)
+
+        commentingPresenter = CommentingPresenter(this) { (activity as MainActivity).activityComponent.inject(it) }
+        commentingPresenter.init()
+        keyboardOpenCloseListener = KeyboardOpenCloseListener(activity.my_content)
+        keyboardOpenCloseListener?.listenForKeyboard {
+            commentingPresenter.onKeyboardOpenClose(it)
         }
-        stateEvents.whenEnterExit(State.STICKERS, stickers!!)
-        stateEvents.whenEnterExit(State.TEXT_MEDIA, AlphaFeature(sticker_mode_icon, 0.6f))
 
         sticker_mode_icon.onClick {
             keyboardOpenCloseListener?.deGlitchKeyboardSlideDown()
-            stateEvents.moveTo(State.STICKERS)
+            commentingPresenter.showStickers()
         }
 
         comment_text.onFocusChange { view, hasFocus ->
             if (hasFocus) {
-                stateEvents.moveTo(State.TEXT_MEDIA)
+                commentingPresenter.showText()
             }
         }
 
     }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        commentingPresenter.loadState(savedInstanceState)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        commentingPresenter.saveState(outState)
+    }
+
+    override fun stopEditing() {
+        comment_text.clearFocus()
+        hideKeyboard()
+    }
+
+    override fun showMediaBar(visible: Boolean) {
+        println("showMediaBar($visible)")
+        mediaBar?.addRemove(visible)
+    }
+
+    override fun showStickers(visible: Boolean) {
+        println("showStickers($visible)")
+        stickers?.addRemove(visible)
+    }
+
+    override fun fadeStickersIcon(fade: Boolean) {
+        stickerIconFade?.addRemove(fade)
+    }
+
 
     private fun getStickersHeight(): Int {
         if (keyboardOpenCloseListener == null) {

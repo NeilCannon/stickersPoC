@@ -8,6 +8,7 @@ import com.facebook.imagepipeline.listener.RequestListener
 import com.facebook.imagepipeline.listener.RequestLoggingListener
 import com.trello.rxlifecycle.ActivityLifecycleProvider
 import com.trello.rxlifecycle.components.RxActivity
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity
 import java.util.*
 
 class TheApp : Application() {
@@ -18,7 +19,7 @@ class TheApp : Application() {
         lateinit var app: TheApp
         lateinit var appModule: AppModule
 
-        fun forActivity(activityLifecycleProvider: ActivityLifecycleProvider): ActivityComponent {
+        fun forActivity(activityLifecycleProvider: RxAppCompatActivity): ActivityComponent {
             println("forActivity")
             return DaggerActivityComponent.builder().appModule(appModule).activityModule(ActivityModule(activityLifecycleProvider)).build()
         }
@@ -26,6 +27,8 @@ class TheApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        de.akquinet.android.androlog.Log.setDefaultLogLevel(android.util.Log.DEBUG)
+
         app = this
         appModule = AppModule(this)
         graph = DaggerApplicationComponent.builder().appModule(appModule).build()
@@ -41,7 +44,7 @@ class TheApp : Application() {
 
 
 
-    fun forActivity(activity: RxActivity): ActivityComponent {
-        return DaggerActivityComponent.builder().activityModule(ActivityModule(activity)).build()
-    }
+//    fun forActivity(activity: RxActivity): ActivityComponent {
+//        return DaggerActivityComponent.builder().activityModule(ActivityModule(activity)).build()
+//    }
 }

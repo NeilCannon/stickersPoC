@@ -13,7 +13,7 @@ interface EnterExit {
     fun exit() {}
 }
 
-class StateEvents<T : Parcelable>(var state:T) {
+class StateActions<T : Parcelable>(var state:T) : SavesState {
 
     init {
         println("StateEvents($state)")
@@ -49,9 +49,15 @@ class StateEvents<T : Parcelable>(var state:T) {
         getEnterExitEvents(state).exitEvents.add(f)
     }
 
-    fun whenEnterExit(state: T, presenter: Presenter) {
+    fun whenEnterExit(state: T, presenter: Aspect) {
         getEnterExitEvents(state).enterEvents.add( { presenter.add()})
         getEnterExitEvents(state).exitEvents.add( { presenter.remove()})
+    }
+
+    fun whenEnterExit(state: T, f: (enter: Boolean) -> Unit) {
+        println("whenEnterExit(f(enter:Boolean)")
+        getEnterExitEvents(state).enterEvents.add( { f(true)})
+        getEnterExitEvents(state).exitEvents.add( { f(false)})
     }
 
     private fun getEnterExitEvents(state: T): EnterExitEvents {
@@ -59,10 +65,12 @@ class StateEvents<T : Parcelable>(var state:T) {
     }
 
     fun enter(state: T) {
+        println("enter $state")
         eventsMap[state]?.enterEvents?.fire()
     }
 
     fun exit(state: T) {
+        println("exit $state")
         eventsMap[state]?.exitEvents?.fire()
     }
 
@@ -77,13 +85,15 @@ class StateEvents<T : Parcelable>(var state:T) {
         return newState
     }
 
-    fun onSaveInstanceState(outState: Bundle?) {
-        outState?.putParcelable(StateEvents::class.qualifiedName, state)
+    override fun saveState(outState: Bundle?) {
+        println("saveState")
+        outState?.putParcelable(StateActions::class.qualifiedName, state)
     }
 
-    fun onRestoreInstanceState(inState: Bundle?) {
+    override fun loadState(inState: Bundle?) {
+        println("loadState")
         if (inState != null) {
-            val state:T = inState.getParcelable(StateEvents::class.qualifiedName)
+            val state:T = inState.getParcelable(StateActions::class.qualifiedName)
             moveTo(state)
         }
     }
@@ -104,7 +114,7 @@ private class Events {
 
     fun fire() {
         listeners.forEach {
-            println("fire: $it")
+//            println("fire: $it")
             it()
         }
     }

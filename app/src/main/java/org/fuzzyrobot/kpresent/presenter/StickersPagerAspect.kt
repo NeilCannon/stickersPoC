@@ -6,25 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_stickers_pager.view.*
 import kotlinx.android.synthetic.main.pager_tab.view.*
-import org.fuzzyrobot.k.InflatingPresenter
-import org.fuzzyrobot.k.Presenter
-import org.fuzzyrobot.k.ViewPresenter
+import org.fuzzyrobot.k.InflatingAspect
+import org.fuzzyrobot.k.Aspect
+import org.fuzzyrobot.k.ViewAspect
 import org.fuzzyrobot.kpresent.R
 import org.fuzzyrobot.kpresent.StickersTestData
 import org.fuzzyrobot.kpresent.adapter.StickerPackPagerAdapter
 import org.fuzzyrobot.kpresent.load
+import org.fuzzyrobot.kpresent.model.StickerInPack
 
-class StickersPagerPresenter(view: View) : ViewPresenter(view) {
+class StickersPagerAspect(view: View, val onClick: (StickerInPack) -> Unit) : ViewAspect(view) {
     lateinit var fragmentManager: FragmentManager
-    constructor(view: View, fragmentManager: FragmentManager) : this(view){
+    constructor(view: View, fragmentManager: FragmentManager, onClick: (StickerInPack) -> Unit) : this(view, onClick){
+        println("StickersPagerPresenter.constructor() $view")
         this.fragmentManager = fragmentManager
-        add()
     }
     override fun add() {
+        println("StickersPagerPresenter.add() $view")
         val pager = view?.pager!!
         val sliding_tabs = view?.sliding_tabs!!
 
-        pager.adapter = StickerPackPagerAdapter(fragmentManager, StickersTestData.things)
+        pager.adapter = StickerPackPagerAdapter(fragmentManager, StickersTestData.things, onClick)
 
         sliding_tabs.setupWithViewPager(pager)
         sliding_tabs.removeAllTabs()
@@ -37,29 +39,33 @@ class StickersPagerPresenter(view: View) : ViewPresenter(view) {
     }
 }
 
-class HeightAdjustingPresenter(val height:()-> Int, container: ViewGroup, layoutId: Int) : InflatingPresenter(container, layoutId) {
+class HeightAdjustingAspect(val height:()-> Int, container: ViewGroup, layoutId: Int) : InflatingAspect(container, layoutId) {
 
     override fun add() {
         super.add()
+        println("HeightAdjustingPresenter.add() ${container.id} $view")
         if (height() != 0) {
             setContainerHeight(height())
         }
     }
 
     override fun remove() {
+        println("HeightAdjustingPresenter.remove()")
         super.remove()
         setContainerHeight(0)
     }
 
     private fun setContainerHeight(containerHeight: Int) {
+        println("setContainerHeight($containerHeight")
         view?.layoutParams?.height = containerHeight
     }
 }
 
-class HeightAdjustingDelegatingPresenter(val height:()-> Int, container: ViewGroup, layoutId: Int, val f: (view: View) -> Presenter) : InflatingPresenter(container, layoutId) {
+class HeightAdjustingDelegatingAspect(val height:()-> Int, container: ViewGroup, layoutId: Int, val f: (view: View) -> Aspect) : InflatingAspect(container, layoutId) {
 
     override fun add() {
         super.add()
+        println("HeightAdjustingDelegatingPresenter.add()  ${container.id} $view")
         if (height() != 0) {
             setContainerHeight(height())
         }
@@ -72,6 +78,7 @@ class HeightAdjustingDelegatingPresenter(val height:()-> Int, container: ViewGro
     }
 
     private fun setContainerHeight(containerHeight: Int) {
+        println("setContainerHeight($containerHeight")
         container.layoutParams?.height = containerHeight
     }
 }
