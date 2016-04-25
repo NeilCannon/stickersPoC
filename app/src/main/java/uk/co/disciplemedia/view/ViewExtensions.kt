@@ -3,8 +3,6 @@ package uk.co.disciplemedia.view
 import android.content.Context
 import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +10,6 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.ViewAnimator
-import kotlinx.android.synthetic.main.pager_page.view.*
 
 
 fun View.hideKeyboard() {

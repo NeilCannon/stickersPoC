@@ -6,8 +6,6 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.facebook.imagepipeline.listener.RequestListener
 import com.facebook.imagepipeline.listener.RequestLoggingListener
-import com.trello.rxlifecycle.ActivityLifecycleProvider
-import com.trello.rxlifecycle.components.RxActivity
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity
 import java.util.*
 

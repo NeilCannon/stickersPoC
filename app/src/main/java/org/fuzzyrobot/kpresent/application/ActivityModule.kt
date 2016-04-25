@@ -9,7 +9,6 @@ import dagger.Module
 import dagger.Provides
 import org.fuzzyrobot.kpresent.rx.StickerService
 import org.jetbrains.anko.indeterminateProgressDialog
-import java.lang.ref.WeakReference
 import javax.inject.Singleton
 
 class BusySpinner(val activity: Activity) {

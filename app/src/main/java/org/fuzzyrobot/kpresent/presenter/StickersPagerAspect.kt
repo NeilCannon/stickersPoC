@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_stickers_pager.view.*
 import kotlinx.android.synthetic.main.pager_tab.view.*
-import org.fuzzyrobot.k.InflatingAspect
 import org.fuzzyrobot.k.Aspect
+import org.fuzzyrobot.k.InflatingAspect
 import org.fuzzyrobot.k.ViewAspect
 import org.fuzzyrobot.kpresent.R
 import org.fuzzyrobot.kpresent.StickersTestData

@@ -1,14 +1,12 @@
 package org.fuzzyrobot.kpresent.presenter
 
 import android.os.Bundle
-import org.fuzzyrobot.k.Aspect
 import org.fuzzyrobot.k.SavesState
 import org.fuzzyrobot.k.StateActions
 import org.fuzzyrobot.kpresent.CommentingState
 import org.fuzzyrobot.kpresent.CommentingView
 import org.fuzzyrobot.kpresent.KeyboardInfo
 import org.fuzzyrobot.kpresent.application.BusySpinner
-import org.fuzzyrobot.kpresent.model.Sticker
 import org.fuzzyrobot.kpresent.model.StickerInPack
 import org.fuzzyrobot.kpresent.model.StickerUse
 import org.fuzzyrobot.kpresent.rx.StickerService

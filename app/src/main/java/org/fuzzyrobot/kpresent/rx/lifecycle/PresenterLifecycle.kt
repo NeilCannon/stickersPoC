@@ -3,8 +3,8 @@ package org.fuzzyrobot.kpresent.rx.lifecycle
 import android.support.annotation.CheckResult
 import com.trello.rxlifecycle.OutsideLifecycleException
 import com.trello.rxlifecycle.RxLifecycle
-import org.fuzzyrobot.k.DecoratedAspect
 import org.fuzzyrobot.k.Aspect
+import org.fuzzyrobot.k.DecoratedAspect
 import rx.Observable
 import rx.functions.Func1
 import rx.subjects.BehaviorSubject

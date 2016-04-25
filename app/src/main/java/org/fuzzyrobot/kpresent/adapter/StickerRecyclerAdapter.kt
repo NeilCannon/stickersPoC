@@ -11,7 +11,6 @@ import org.fuzzyrobot.kpresent.load
 import org.fuzzyrobot.kpresent.model.StickerInPack
 import org.fuzzyrobot.kpresent.model.StickerPack
 import org.jetbrains.anko.onClick
-import javax.inject.Inject
 
 class StickerRecyclerAdapter(val activityComponent: ActivityComponent, val stickerPack: StickerPack, val onClick: ((StickerInPack) -> Unit)?) : RecyclerView.Adapter<StickerRecyclerAdapter.Holder>() {
 

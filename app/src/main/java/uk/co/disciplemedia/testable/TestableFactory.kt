@@ -1,7 +1,5 @@
 package uk.co.disciplemedia.testable
 
-import uk.co.disciplemedia.testable.ForTesting
-
 /**
  * Used when class A instantiates class B, but we'd like to make B a mock during testing.
  * @param factory constructs a new T. Called lazily & cached when 'instance' is first accessed
