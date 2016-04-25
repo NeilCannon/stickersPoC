@@ -3,7 +3,7 @@ package org.fuzzyrobot.k
 import android.app.AlertDialog
 import android.support.v4.app.FragmentActivity
 
-class DialogFragmentFeature(val activity: FragmentActivity) : Aspect {
+class DialogFragmentAspect(val activity: FragmentActivity) : Aspect {
 
     var alertDialog: AlertDialog? = null
 

@@ -2,34 +2,27 @@ package org.fuzzyrobot.kpresent
 
 import android.app.Activity
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.trello.rxlifecycle.components.support.RxFragment
-import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_commenting.*
-import org.fuzzyrobot.k.*
+import org.fuzzyrobot.k.AlphaAspect
+import org.fuzzyrobot.k.Aspect
+import org.fuzzyrobot.k.InflatingAspect
 import org.fuzzyrobot.kpresent.activity.MainActivity
-import org.fuzzyrobot.kpresent.model.StickerUse
 import org.fuzzyrobot.kpresent.presenter.CommentingPresenter
 import org.fuzzyrobot.kpresent.presenter.HeightAdjustingDelegatingAspect
-import org.fuzzyrobot.kpresent.presenter.HeightAdjustingAspect
 import org.fuzzyrobot.kpresent.presenter.StickersPagerAspect
-import org.fuzzyrobot.kpresent.rx.StickerClickSubject
-import org.fuzzyrobot.kpresent.rx.StickerService
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.onFocusChange
 import org.jetbrains.anko.support.v4.find
-import org.jetbrains.anko.support.v4.indeterminateProgressDialog
-import javax.inject.Inject
 
 interface CommentingView {
     fun stopEditing()
-    fun showMediaBar(visible:Boolean)
-    fun showStickers(visible:Boolean)
+    fun showMediaBar(visible: Boolean)
+    fun showStickers(visible: Boolean)
     fun fadeStickersIcon(fade: Boolean)
 }
 
@@ -44,10 +37,6 @@ class CommentingFragment : RxFragment(), CommentingView {
     override fun onAttach(activity: Activity?) {
         super.onAttach(activity)
         (activity as MainActivity).activityComponent.inject(this)
-
-//        stickerClickSubject.get().bindToLifecycle(this@CommentingFragment).subscribe {
-//            commentingPresenter.onStickerClick(it)
-//        }
 
     }
 
@@ -65,7 +54,7 @@ class CommentingFragment : RxFragment(), CommentingView {
             }
         }
 
-        stickerIconFade = AlphaFeature(sticker_mode_icon, 0.6f)
+        stickerIconFade = AlphaAspect(sticker_mode_icon, 0.6f)
 
         commentingPresenter = CommentingPresenter(this) { (activity as MainActivity).activityComponent.inject(it) }
         commentingPresenter.init()

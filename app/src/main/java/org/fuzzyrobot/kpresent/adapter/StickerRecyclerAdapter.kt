@@ -10,20 +10,19 @@ import org.fuzzyrobot.kpresent.inflate
 import org.fuzzyrobot.kpresent.load
 import org.fuzzyrobot.kpresent.model.StickerInPack
 import org.fuzzyrobot.kpresent.model.StickerPack
-import org.fuzzyrobot.kpresent.rx.StickerClickSubject
 import org.jetbrains.anko.onClick
 import javax.inject.Inject
 
-class StickerRecyclerAdapter(val activityComponent: ActivityComponent, val stickerPack: StickerPack, val onClick: (StickerInPack) -> Unit) : RecyclerView.Adapter<StickerRecyclerAdapter.Holder>() {
+class StickerRecyclerAdapter(val activityComponent: ActivityComponent, val stickerPack: StickerPack, val onClick: ((StickerInPack) -> Unit)?) : RecyclerView.Adapter<StickerRecyclerAdapter.Holder>() {
 
     init {
         activityComponent.inject(this)
     }
 
     open class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun display(stickerInPack: StickerInPack, onClick: () -> Unit) {
+        fun display(stickerInPack: StickerInPack, onClick: ((StickerInPack) -> Unit)?) {
             load(itemView?.icon, stickerInPack.sticker.url)
-            itemView?.onClick { onClick() }
+            itemView?.onClick { onClick?.invoke(stickerInPack) }
         }
     }
 
@@ -33,7 +32,7 @@ class StickerRecyclerAdapter(val activityComponent: ActivityComponent, val stick
 
     override fun onBindViewHolder(holder: Holder?, position: Int) {
         val stickerInPack = stickerPack.get(position)
-        holder?.display(stickerInPack) { onClick(stickerInPack) }
+        holder?.display(stickerInPack, onClick)
     }
 
     override fun getItemCount(): Int {

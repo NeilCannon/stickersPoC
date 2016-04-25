@@ -11,10 +11,6 @@ import javax.inject.Singleton
 @Module
 class AppModule(private val application: Application) {
 
-//    @Provides
-//    @Singleton
-//    fun provideStickerClickSubject() = StickerClickSubject()
-
     @Provides
     @Singleton
     fun provideStickerPurchasesSubject() = StickerService()
